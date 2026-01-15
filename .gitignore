@@ -41,3 +41,16 @@ query_context_*.txt
 # Model & embeddings
 # --------------------
 vector_store/
+
+# --------------------
+# ML / DL Models
+# --------------------
+*.keras
+*.h5
+*.joblib
+
+# Ignore model folders
+utils/AE_model/
+utils/ML_model/
+utils/TS_model/
+
