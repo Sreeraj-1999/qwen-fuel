@@ -112,7 +112,12 @@ logger.info("Loading Qwen model for LLM operations...")
 MODEL_NAME = "Qwen/Qwen2.5-7B-Instruct"
 SAVED_MODEL_PATH = r"C:\Users\User\Desktop\siemens\OFFSHORE\qwen_marine_maintenance_alpaca2"
 
-tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, trust_remote_code=True)
+# tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, trust_remote_code=True)
+tokenizer = AutoTokenizer.from_pretrained(
+    MODEL_NAME, 
+    trust_remote_code=True,
+    local_files_only=True  # Don't try to connect to internet
+)
 tokenizer.pad_token = tokenizer.eos_token
 
 bnb_config = BitsAndBytesConfig(
@@ -127,7 +132,8 @@ base_model = AutoModelForCausalLM.from_pretrained(
     torch_dtype=torch.float16,
     device_map={"": 0},
     trust_remote_code=True,
-    quantization_config=bnb_config
+    quantization_config=bnb_config,
+    local_files_only=True
 )
 
 model = PeftModel.from_pretrained(base_model, SAVED_MODEL_PATH)

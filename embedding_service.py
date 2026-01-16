@@ -18,7 +18,7 @@ class EmbeddingService:
         if EmbeddingService._model is None and not EmbeddingService._loading:
             EmbeddingService._loading = True
             logger.info(f"Loading embedding model: {model_name}")
-            EmbeddingService._model = SentenceTransformer(model_name)
+            EmbeddingService._model = SentenceTransformer(model_name,local_files_only=True)
             EmbeddingService._loading = False
         return EmbeddingService._model
 
