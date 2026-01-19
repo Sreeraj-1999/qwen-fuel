@@ -458,6 +458,50 @@ def generate_llm_response():
 #     finally:
 #         torch.cuda.empty_cache() 
 
+@app.route('/gpu/stt/transcribe', methods=['POST'])
+def transcribe_audio():
+    """Transcribe audio using Whisper model"""
+    try:
+        if 'audio' not in request.files:
+            return jsonify({'error': 'No audio file provided'}), 400
+        
+        audio_file = request.files['audio']
+        
+        logger.info("Starting audio transcription with Whisper")
+        
+        # Read audio data
+        audio_data = audio_file.read()
+        
+        # Convert to numpy array
+        audio_np, sample_rate = sf.read(io.BytesIO(audio_data))
+        
+        # Resample to 16kHz if needed (Whisper expects 16kHz)
+        if sample_rate != 16000:
+            target_length = int(len(audio_np) * 16000 / sample_rate)
+            audio_np = resample(audio_np, target_length)
+            sample_rate = 16000
+        
+        # Ensure mono audio
+        if len(audio_np.shape) > 1:
+            audio_np = audio_np.mean(axis=1)
+        
+        audio_np = audio_np.astype(np.float32)
+        result = whisper_model.transcribe(audio_np, language='en')
+        transcription = result['text'].strip()
+        
+        logger.info(f"Transcription successful: {transcription[:50]}...")
+        
+        return jsonify({
+            'transcription': transcription,
+            'status': 'success'
+        })
+        
+    except Exception as e:
+        logger.error(f"Error in audio transcription: {e}")
+        return jsonify({'error': str(e)}), 500
+    finally:
+        torch.cuda.empty_cache()
+
 @app.route('/gpu/tts/generate', methods=['POST'])
 def text_to_speech():
     """Convert text to speech using Windows SAPI"""
