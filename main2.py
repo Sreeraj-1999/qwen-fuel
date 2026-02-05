@@ -17,7 +17,8 @@ import requests
 from vessel_manager import VesselSpecificManager
 from database import initialize_database, get_database_manager
 from queue_manager import initialize_queue_manager, get_queue_manager, Priority, process_chat_immediately
-from test import process_fixed_manual_query
+# from test import process_fixed_manual_query
+from test2 import process_fixed_manual_query
 from faultsense import load_config_with_overrides, process_smart_maintenance_results, run_pipeline
 import pickle
 import pandas as pd
